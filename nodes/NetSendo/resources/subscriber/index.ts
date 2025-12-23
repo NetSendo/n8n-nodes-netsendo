@@ -139,6 +139,30 @@ export const subscriberDescription: INodeProperties[] = [
 		],
 		default: 'getMany',
 	},
+	// Contact List (required for Get Many)
+	{
+		displayName: 'Contact List',
+		name: 'contactListId',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getLists',
+		},
+		default: '',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['subscriber'],
+				operation: ['getMany'],
+			},
+		},
+		description: 'Select a contact list to get subscribers from',
+		routing: {
+			send: {
+				type: 'query',
+				property: 'contact_list_id',
+			},
+		},
+	},
 	// Subscriber ID (for Get, Update, Delete)
 	{
 		displayName: 'Subscriber ID',
@@ -418,6 +442,25 @@ export const subscriberDescription: INodeProperties[] = [
 					send: {
 						type: 'query',
 						property: 'per_page',
+					},
+				},
+			},
+			{
+				displayName: 'Status',
+				name: 'status',
+				type: 'options',
+				options: [
+					{ name: 'Active', value: 'active' },
+					{ name: 'Inactive', value: 'inactive' },
+					{ name: 'Unsubscribed', value: 'unsubscribed' },
+					{ name: 'Bounced', value: 'bounced' },
+				],
+				default: '',
+				description: 'Filter by subscriber status',
+				routing: {
+					send: {
+						type: 'query',
+						property: 'status',
 					},
 				},
 			},

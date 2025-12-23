@@ -58,23 +58,48 @@ export const listDescription: INodeProperties[] = [
 					},
 				},
 			},
+			{
+				name: 'Get Subscribers',
+				value: 'getSubscribers',
+				action: 'Get subscribers from a list',
+				description: 'Get all subscribers belonging to a specific contact list',
+				routing: {
+					request: {
+						method: 'GET',
+						url: '=/lists/{{$parameter.listId}}/subscribers',
+					},
+					output: {
+						postReceive: [
+							{
+								type: 'rootProperty',
+								properties: {
+									property: 'data',
+								},
+							},
+						],
+					},
+				},
+			},
 		],
 		default: 'getMany',
 	},
-	// List ID (for Get operation)
+	// List ID (for Get and Get Subscribers operations)
 	{
-		displayName: 'List ID',
+		displayName: 'Contact List',
 		name: 'listId',
-		type: 'number',
-		default: 0,
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getLists',
+		},
+		default: '',
 		required: true,
 		displayOptions: {
 			show: {
 				resource: ['list'],
-				operation: ['get'],
+				operation: ['get', 'getSubscribers'],
 			},
 		},
-		description: 'ID of the contact list to retrieve',
+		description: 'Select a contact list',
 	},
 	// Options for Get Many
 	{
@@ -110,6 +135,86 @@ export const listDescription: INodeProperties[] = [
 				options: [
 					{ name: 'Created At', value: 'created_at' },
 					{ name: 'Name', value: 'name' },
+				],
+				default: 'created_at',
+				routing: {
+					send: {
+						type: 'query',
+						property: 'sort_by',
+					},
+				},
+			},
+			{
+				displayName: 'Sort Order',
+				name: 'sort_order',
+				type: 'options',
+				options: [
+					{ name: 'Ascending', value: 'asc' },
+					{ name: 'Descending', value: 'desc' },
+				],
+				default: 'desc',
+				routing: {
+					send: {
+						type: 'query',
+						property: 'sort_order',
+					},
+				},
+			},
+		],
+	},
+	// Options for Get Subscribers
+	{
+		displayName: 'Options',
+		name: 'options',
+		type: 'collection',
+		placeholder: 'Add Option',
+		default: {},
+		displayOptions: {
+			show: {
+				resource: ['list'],
+				operation: ['getSubscribers'],
+			},
+		},
+		options: [
+			{
+				displayName: 'Per Page',
+				name: 'per_page',
+				type: 'number',
+				default: 25,
+				description: 'Number of results per page',
+				routing: {
+					send: {
+						type: 'query',
+						property: 'per_page',
+					},
+				},
+			},
+			{
+				displayName: 'Status',
+				name: 'status',
+				type: 'options',
+				options: [
+					{ name: 'Active', value: 'active' },
+					{ name: 'Inactive', value: 'inactive' },
+					{ name: 'Unsubscribed', value: 'unsubscribed' },
+					{ name: 'Bounced', value: 'bounced' },
+				],
+				default: '',
+				description: 'Filter by subscriber status',
+				routing: {
+					send: {
+						type: 'query',
+						property: 'status',
+					},
+				},
+			},
+			{
+				displayName: 'Sort By',
+				name: 'sort_by',
+				type: 'options',
+				options: [
+					{ name: 'Created At', value: 'created_at' },
+					{ name: 'Email', value: 'email' },
 				],
 				default: 'created_at',
 				routing: {
