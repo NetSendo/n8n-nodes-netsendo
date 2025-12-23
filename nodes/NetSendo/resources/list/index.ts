@@ -85,7 +85,7 @@ export const listDescription: INodeProperties[] = [
 	},
 	// List ID (for Get and Get Subscribers operations)
 	{
-		displayName: 'Contact List',
+		displayName: 'Contact List Name or ID',
 		name: 'listId',
 		type: 'options',
 		typeOptions: {
@@ -99,7 +99,7 @@ export const listDescription: INodeProperties[] = [
 				operation: ['get', 'getSubscribers'],
 			},
 		},
-		description: 'Select a contact list',
+		description: 'Select a contact list. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	// Options for Get Many
 	{
@@ -199,7 +199,7 @@ export const listDescription: INodeProperties[] = [
 					{ name: 'Unsubscribed', value: 'unsubscribed' },
 					{ name: 'Bounced', value: 'bounced' },
 				],
-				default: '',
+				default: 'active',
 				description: 'Filter by subscriber status',
 				routing: {
 					send: {

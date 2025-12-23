@@ -15,13 +15,13 @@ export const subscriberDescription: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Get Many',
-				value: 'getMany',
-				action: 'Get many subscribers',
-				description: 'Get all subscribers',
+				name: 'Create',
+				value: 'create',
+				action: 'Create a subscriber',
+				description: 'Create a new subscriber',
 				routing: {
 					request: {
-						method: 'GET',
+						method: 'POST',
 						url: '/subscribers',
 					},
 					output: {
@@ -33,6 +33,18 @@ export const subscriberDescription: INodeProperties[] = [
 								},
 							},
 						],
+					},
+				},
+			},
+			{
+				name: 'Delete',
+				value: 'delete',
+				action: 'Delete a subscriber',
+				description: 'Delete a subscriber (soft delete)',
+				routing: {
+					request: {
+						method: 'DELETE',
+						url: '=/subscribers/{{$parameter.subscriberId}}',
 					},
 				},
 			},
@@ -81,13 +93,13 @@ export const subscriberDescription: INodeProperties[] = [
 				},
 			},
 			{
-				name: 'Create',
-				value: 'create',
-				action: 'Create a subscriber',
-				description: 'Create a new subscriber',
+				name: 'Get Many',
+				value: 'getMany',
+				action: 'Get many subscribers',
+				description: 'Get all subscribers',
 				routing: {
 					request: {
-						method: 'POST',
+						method: 'GET',
 						url: '/subscribers',
 					},
 					output: {
@@ -124,24 +136,12 @@ export const subscriberDescription: INodeProperties[] = [
 					},
 				},
 			},
-			{
-				name: 'Delete',
-				value: 'delete',
-				action: 'Delete a subscriber',
-				description: 'Delete a subscriber (soft delete)',
-				routing: {
-					request: {
-						method: 'DELETE',
-						url: '=/subscribers/{{$parameter.subscriberId}}',
-					},
-				},
-			},
 		],
 		default: 'getMany',
 	},
 	// Contact List (required for Get Many)
 	{
-		displayName: 'Contact List',
+		displayName: 'Contact List Name or ID',
 		name: 'contactListId',
 		type: 'options',
 		typeOptions: {
@@ -155,7 +155,7 @@ export const subscriberDescription: INodeProperties[] = [
 				operation: ['getMany'],
 			},
 		},
-		description: 'Select a contact list to get subscribers from',
+		description: 'Select a contact list to get subscribers from. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 		routing: {
 			send: {
 				type: 'query',
@@ -218,7 +218,7 @@ export const subscriberDescription: INodeProperties[] = [
 	},
 	// Contact List (for Create) - dropdown
 	{
-		displayName: 'Contact List',
+		displayName: 'Contact List Name or ID',
 		name: 'contactListId',
 		type: 'options',
 		typeOptions: {
@@ -232,7 +232,7 @@ export const subscriberDescription: INodeProperties[] = [
 				operation: ['create'],
 			},
 		},
-		description: 'Contact list to add the subscriber to',
+		description: 'Contact list to add the subscriber to. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 		routing: {
 			send: {
 				type: 'body',
@@ -291,6 +291,19 @@ export const subscriberDescription: INodeProperties[] = [
 				},
 			},
 			{
+				displayName: 'Source',
+				name: 'source',
+				type: 'string',
+				default: 'n8n',
+				description: 'Source of the subscription',
+				routing: {
+					send: {
+						type: 'body',
+						property: 'source',
+					},
+				},
+			},
+			{
 				displayName: 'Status',
 				name: 'status',
 				type: 'options',
@@ -305,19 +318,6 @@ export const subscriberDescription: INodeProperties[] = [
 					send: {
 						type: 'body',
 						property: 'status',
-					},
-				},
-			},
-			{
-				displayName: 'Source',
-				name: 'source',
-				type: 'string',
-				default: 'n8n',
-				description: 'Source of the subscription',
-				routing: {
-					send: {
-						type: 'body',
-						property: 'source',
 					},
 				},
 			},
@@ -387,6 +387,18 @@ export const subscriberDescription: INodeProperties[] = [
 				},
 			},
 			{
+				displayName: 'Source',
+				name: 'source',
+				type: 'string',
+				default: '',
+				routing: {
+					send: {
+						type: 'body',
+						property: 'source',
+					},
+				},
+			},
+			{
 				displayName: 'Status',
 				name: 'status',
 				type: 'options',
@@ -401,18 +413,6 @@ export const subscriberDescription: INodeProperties[] = [
 					send: {
 						type: 'body',
 						property: 'status',
-					},
-				},
-			},
-			{
-				displayName: 'Source',
-				name: 'source',
-				type: 'string',
-				default: '',
-				routing: {
-					send: {
-						type: 'body',
-						property: 'source',
 					},
 				},
 			},
@@ -455,7 +455,7 @@ export const subscriberDescription: INodeProperties[] = [
 					{ name: 'Unsubscribed', value: 'unsubscribed' },
 					{ name: 'Bounced', value: 'bounced' },
 				],
-				default: '',
+				default: 'active',
 				description: 'Filter by subscriber status',
 				routing: {
 					send: {
