@@ -1,4 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <rect width="64" height="64" rx="12" fill="#6366F1"/>
-  <path d="M20 44V20h6l12 16V20h6v24h-6L26 28v16h-6z" fill="white"/>
+  <!-- Brand color: Lime Green -->
+  <!-- Left Bar -->
+  <rect x="10" y="16" width="3" height="32" rx="1.5" fill="#84cc16"/>
+  
+  <!-- Right Bar -->
+  <rect x="51" y="16" width="3" height="32" rx="1.5" fill="#84cc16"/>
+  
+  <!-- Envelope Body -->
+  <rect x="20" y="18" width="24" height="20" rx="2" fill="#84cc16"/>
+  
+  <!-- Envelope Flap (White lines for negative space effect) -->
+  <!-- Top V -->
+  <path d="M20 18L32 28L44 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Bottom Folds -->
+  <path d="M20 38L29 30" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <path d="M44 38L35 30" stroke="white" stroke-width="2" stroke-linecap="round"/>
 </svg>
