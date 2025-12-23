@@ -1,19 +1,23 @@
 {
-	"name": "n8n-nodes-<...>",
+	"name": "n8n-nodes-netsendo",
 	"version": "0.1.0",
-	"description": "",
+	"description": "n8n community node for NetSendo Email Marketing Platform",
 	"license": "MIT",
-	"homepage": "",
+	"homepage": "https://github.com/NetSendo/n8n-nodes-netsendo",
 	"keywords": [
-		"n8n-community-node-package"
+		"n8n-community-node-package",
+		"netsendo",
+		"email-marketing",
+		"newsletter",
+		"subscribers"
 	],
 	"author": {
-		"name": "",
-		"email": ""
+		"name": "NetSendo",
+		"email": "contact@netsendo.com"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/<...>/n8n-nodes-<...>.git"
+		"url": "https://github.com/NetSendo/n8n-nodes-netsendo.git"
 	},
 	"scripts": {
 		"build": "n8n-node build",
@@ -31,12 +35,10 @@
 		"n8nNodesApiVersion": 1,
 		"strict": true,
 		"credentials": [
-			"dist/credentials/GithubIssuesApi.credentials.js",
-			"dist/credentials/GithubIssuesOAuth2Api.credentials.js"
+			"dist/credentials/NetSendoApi.credentials.js"
 		],
 		"nodes": [
-			"dist/nodes/GithubIssues/GithubIssues.node.js",
-			"dist/nodes/Example/Example.node.js"
+			"dist/nodes/NetSendo/NetSendo.node.js"
 		]
 	},
 	"devDependencies": {
