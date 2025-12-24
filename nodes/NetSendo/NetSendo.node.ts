@@ -8,6 +8,7 @@ import {
 	type IDataObject,
 } from 'n8n-workflow';
 import { listDescription } from './resources/list';
+import { smsDescription } from './resources/sms';
 import { subscriberDescription } from './resources/subscriber';
 import { tagDescription } from './resources/tag';
 import { getLists } from './listSearch/getLists';
@@ -103,6 +104,11 @@ export class NetSendo implements INodeType {
 						description: 'Manage contact lists',
 					},
 					{
+						name: 'SMS',
+						value: 'sms',
+						description: 'Send and manage SMS messages',
+					},
+					{
 						name: 'Subscriber',
 						value: 'subscriber',
 						description: 'Manage subscribers',
@@ -116,6 +122,7 @@ export class NetSendo implements INodeType {
 				default: 'subscriber',
 			},
 			...listDescription,
+			...smsDescription,
 			...subscriberDescription,
 			...tagDescription,
 		],
@@ -298,6 +305,88 @@ export class NetSendo implements INodeType {
 
 						for (const item of results) {
 							returnData.push({ json: item });
+						}
+					}
+				}
+
+				// ==================== SMS RESOURCE ====================
+				if (resource === 'sms') {
+					if (operation === 'send') {
+						const phoneNumber = this.getNodeParameter('phoneNumber', i) as string;
+						const message = this.getNodeParameter('message', i) as string;
+						const additionalFields = this.getNodeParameter('additionalFields', i, {}) as IDataObject;
+
+						const body: IDataObject = {
+							phone_number: phoneNumber,
+							message,
+							...additionalFields,
+						};
+
+						const response = await this.helpers.httpRequestWithAuthentication.call(
+							this,
+							'netSendoApi',
+							{
+								method: 'POST' as IHttpRequestMethods,
+								url: `${baseUrl}/sms/send`,
+								body,
+							},
+						);
+						returnData.push({ json: response.data || response });
+					} else if (operation === 'sendBatch') {
+						const message = this.getNodeParameter('message', i) as string;
+						const targetType = this.getNodeParameter('targetType', i) as string;
+						const additionalFields = this.getNodeParameter('additionalFields', i, {}) as IDataObject;
+
+						const body: IDataObject = {
+							message,
+							...additionalFields,
+						};
+
+						if (targetType === 'list') {
+							body.contact_list_id = this.getNodeParameter('contactListId', i) as string;
+						} else if (targetType === 'tags') {
+							const tagsString = this.getNodeParameter('tags', i) as string;
+							body.tags = tagsString.split(',').map((tag) => tag.trim());
+						}
+
+						const response = await this.helpers.httpRequestWithAuthentication.call(
+							this,
+							'netSendoApi',
+							{
+								method: 'POST' as IHttpRequestMethods,
+								url: `${baseUrl}/sms/batch`,
+								body,
+							},
+						);
+						returnData.push({ json: response.data || response });
+					} else if (operation === 'getStatus') {
+						const smsId = this.getNodeParameter('smsId', i) as string;
+						const response = await this.helpers.httpRequestWithAuthentication.call(
+							this,
+							'netSendoApi',
+							{
+								method: 'GET' as IHttpRequestMethods,
+								url: `${baseUrl}/sms/status/${smsId}`,
+							},
+						);
+						returnData.push({ json: response.data || response });
+					} else if (operation === 'listProviders') {
+						const response = await this.helpers.httpRequestWithAuthentication.call(
+							this,
+							'netSendoApi',
+							{
+								method: 'GET' as IHttpRequestMethods,
+								url: `${baseUrl}/sms/providers`,
+							},
+						);
+
+						const data = response.data || response;
+						if (Array.isArray(data)) {
+							for (const item of data) {
+								returnData.push({ json: item });
+							}
+						} else {
+							returnData.push({ json: data });
 						}
 					}
 				}

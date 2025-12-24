@@ -42,6 +42,9 @@ export class NetSendoTrigger implements INodeType {
 				name: 'events',
 				type: 'multiOptions',
 				options: [
+					{ name: 'SMS Failed', value: 'sms.failed' },
+					{ name: 'SMS Queued', value: 'sms.queued' },
+					{ name: 'SMS Sent', value: 'sms.sent' },
 					{ name: 'Subscriber Bounced', value: 'subscriber.bounced' },
 					{ name: 'Subscriber Created', value: 'subscriber.created' },
 					{ name: 'Subscriber Deleted', value: 'subscriber.deleted' },

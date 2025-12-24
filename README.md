@@ -2,112 +2,228 @@
 
 # n8n-nodes-netsendo
 
-This is an n8n community node for **[NetSendo](https://netsendo.com)** – a powerful, self-hosted email marketing automation platform.
+[![npm version](https://badge.fury.io/js/n8n-nodes-netsendo.svg)](https://www.npmjs.com/package/n8n-nodes-netsendo)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![n8n community](https://img.shields.io/badge/n8n-community%20node-orange)](https://n8n.io)
 
-This node allows you to automate your email marketing workflows directly within [n8n](https://n8n.io), connecting NetSendo with thousands of other apps and services.
+This is an n8n community node for **[NetSendo](https://netsendo.com)** – a powerful, self-hosted email & SMS marketing automation platform.
+
+Automate your marketing workflows directly within [n8n](https://n8n.io), connecting NetSendo with thousands of other apps and services.
 
 ---
 
 ## 🚀 Features
 
-With the NetSendo node, you can seamlessly interact with your Netsendo instance to:
+| Feature                  | Description                                     |
+| ------------------------ | ----------------------------------------------- |
+| 📧 **Email Marketing**   | Manage subscribers, lists, and tags             |
+| 📱 **SMS Marketing**     | Send single & batch SMS messages                |
+| 🔄 **Webhook Triggers**  | React to subscriber and SMS events in real-time |
+| 📋 **Dynamic Dropdowns** | Automatically loads your contact lists          |
 
-- **Manage Subscribers**: Create, update, delete, and search for subscribers.
-- **Manage Lists**: Retrieve contact lists and their subscribers.
-- **Manage Tags**: Access and organize your tags.
-- **Dynamic Dropdowns**: Automatically loads your contact lists for easy selection.
-- **Webhook Triggers**: Automatically start workflows when subscriber events occur.
+---
 
 ## 📦 Installation
 
-To install this node in your n8n instance:
+### Via n8n UI (Recommended)
 
-1.  Go to **Settings > Community Nodes**.
-2.  Select **Install**.
-3.  Enter `n8n-nodes-netsendo` as the package name.
-4.  Click **Install**.
+1. Go to **Settings > Community Nodes**
+2. Click **Install**
+3. Enter `n8n-nodes-netsendo`
+4. Click **Install**
 
-Alternatively, if you are running n8n via Docker or npm, you can install it manually:
+### Via npm
 
 ```bash
 npm install n8n-nodes-netsendo
 ```
 
+### Via Docker
+
+Add to your `docker-compose.yml`:
+
+```yaml
+environment:
+  - N8N_COMMUNITY_PACKAGES=n8n-nodes-netsendo
+```
+
+---
+
+## 🔧 Development Setup
+
+To test the node locally before publishing:
+
+### 1. Clone and install dependencies
+
+```bash
+git clone https://github.com/NetSendo/n8n-nodes-netsendo.git
+cd n8n-nodes-netsendo
+npm install
+```
+
+### 2. Build the project
+
+```bash
+npm run build
+```
+
+### 3. Link to your local n8n
+
+```bash
+# In the node project directory
+npm link
+
+# In your n8n installation directory (find with: which n8n)
+cd ~/.n8n
+npm link n8n-nodes-netsendo
+```
+
+### 4. Start n8n
+
+```bash
+n8n start
+```
+
+### 5. Alternative: Use n8n-node dev command
+
+```bash
+npm run dev
+```
+
+This will watch for changes and automatically rebuild.
+
+---
+
 ## 🔐 Credentials Setup
 
-To use this node, you need to connect it to your NetSendo installation.
+1. In n8n, go to **Credentials > Create New**
+2. Search for **NetSendo API**
+3. Enter:
+   - **Base URL**: Your NetSendo installation URL (e.g., `https://your-domain.com`)
+   - **API Key**: Your API token from **Settings > API Keys** (format: `ns_live_...`)
 
-1.  In n8n, go to **Credentials** and click **Create New**.
-2.  Search for **NetSendo API**.
-3.  Enter the following details:
-    - **Base URL**: The URL of your NetSendo installation (e.g., `https://premium.gregciupek.com`). _Do not include `/api/v1` at the end._
-    - **API Key**: Your personal API token. You can generate this in your NetSendo dashboard under **Settings > API Keys** (format: `ns_live_...`).
+> **Required permissions:**
+>
+> - For subscribers/lists: `subscribers:read`, `subscribers:write`, `lists:read`
+> - For SMS: `sms:read`, `sms:write`
+> - For triggers: `webhooks:read`, `webhooks:write`
 
-> **Note**: For using triggers, your API key must have `webhooks:read` and `webhooks:write` permissions.
+---
 
 ## 🛠️ Operations
 
 ### ⚡ NetSendo Trigger
 
-Start workflows automatically when subscriber events occur in NetSendo.
+Start workflows automatically when events occur.
 
-**Supported Events:**
+**Subscriber Events:**
 
-- `subscriber.created` - New subscriber added
-- `subscriber.updated` - Subscriber data changed
-- `subscriber.deleted` - Subscriber removed
-- `subscriber.subscribed` - Subscriber confirmed subscription
-- `subscriber.unsubscribed` - Subscriber opted out
-- `subscriber.bounced` - Email bounced
-- `subscriber.tag_added` - Tag assigned to subscriber
-- `subscriber.tag_removed` - Tag removed from subscriber
+- `subscriber.created` / `subscriber.updated` / `subscriber.deleted`
+- `subscriber.subscribed` / `subscriber.unsubscribed` / `subscriber.bounced`
+- `subscriber.tag_added` / `subscriber.tag_removed`
 
-**How it works:**
+**SMS Events:**
 
-1. Add "NetSendo Trigger" to your workflow
-2. Select events to listen for
-3. Activate the workflow
-4. Webhook is automatically registered in NetSendo
-5. When events occur, your workflow runs automatically
+- `sms.queued` – SMS message queued for sending
+- `sms.sent` – SMS successfully delivered
+- `sms.failed` – SMS delivery failed
+
+---
 
 ### 📂 Resource: List
 
-Manage your contact lists.
+| Operation           | Description                       |
+| ------------------- | --------------------------------- |
+| **Get Many**        | Retrieve all contact lists        |
+| **Get**             | Get a specific list by ID         |
+| **Get Subscribers** | Fetch all subscribers from a list |
 
-- **Get Many**: Retrieve all contact lists (supports pagination and sorting).
-- **Get**: Get details of a specific list by ID.
-- **Get Subscribers**: Fetch all subscribers belonging to a specific list.
+---
 
 ### 👤 Resource: Subscriber
 
-Manage your email subscribers.
+| Operation        | Description                                        |
+| ---------------- | -------------------------------------------------- |
+| **Get Many**     | List subscribers with filters (status, pagination) |
+| **Get**          | Get subscriber by ID                               |
+| **Get by Email** | Find subscriber by email address                   |
+| **Create**       | Add new subscriber                                 |
+| **Update**       | Update subscriber data                             |
+| **Delete**       | Remove subscriber (soft delete)                    |
 
-- **Get Many**: Retrieve a list of subscribers.
-  - _Filters available_: Contact List, Status (Active, Inactive, etc.), Pagination, Sorting.
-- **Get**: Get details of a single subscriber by ID.
-- **Get by Email**: Find a subscriber using their email address.
-- **Create**: Add a new subscriber.
-  - _Required_: Email, Contact List.
-  - _Optional_: First Name, Last Name, Phone, Status, Source, Tags.
-- **Update**: Update an existing subscriber's data.
-- **Delete**: Remove a subscriber (soft delete).
+---
 
 ### 🏷️ Resource: Tag
 
-Access your tags.
+| Operation    | Description                 |
+| ------------ | --------------------------- |
+| **Get Many** | Retrieve all available tags |
+| **Get**      | Get tag details by ID       |
 
-- **Get Many**: Retrieve all available tags.
-- **Get**: Get details of a specific tag by ID.
+---
+
+### 📱 Resource: SMS
+
+| Operation          | Description                             |
+| ------------------ | --------------------------------------- |
+| **Send**           | Send a single SMS message               |
+| **Send Batch**     | Send SMS to a contact list or tag group |
+| **Get Status**     | Check delivery status of an SMS         |
+| **List Providers** | Get available SMS providers             |
+
+**Send SMS Example:**
+
+```json
+{
+	"phone_number": "+48123456789",
+	"message": "Hello from NetSendo!"
+}
+```
+
+**Send Batch SMS Example:**
+
+```json
+{
+	"contact_list_id": 1,
+	"message": "Batch message to all subscribers"
+}
+```
+
+---
 
 ## 📚 Resources
 
-- **[NetSendo Website](https://netsendo.com)**
-- **[NetSendo Repository](https://github.com/NetSendo/NetSendo/)**
-- **[n8n Website](https://n8n.io)**
+| Resource             | Link                                               |
+| -------------------- | -------------------------------------------------- |
+| 🌐 NetSendo Website  | [netsendo.com](https://netsendo.com)               |
+| 📖 NetSendo Docs     | [docs.netsendo.com](https://docs.netsendo.com)     |
+| 💻 GitHub Repository | [github.com/NetSendo](https://github.com/NetSendo) |
+| 🔗 n8n Website       | [n8n.io](https://n8n.io)                           |
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
+
+---
+
+## 💬 Support
+
+- 📧 Email: [contact@netsendo.com](mailto:contact@netsendo.com)
+- 🐛 Issues: [GitHub Issues](https://github.com/NetSendo/n8n-nodes-netsendo/issues)
 
 ---
 
