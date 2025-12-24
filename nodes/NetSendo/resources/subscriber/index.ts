@@ -163,6 +163,39 @@ export const subscriberDescription: INodeProperties[] = [
 			},
 		},
 	},
+	// Return All (for Get Many)
+	{
+		displayName: 'Return All',
+		name: 'returnAll',
+		type: 'boolean',
+		default: false,
+		displayOptions: {
+			show: {
+				resource: ['subscriber'],
+				operation: ['getMany'],
+			},
+		},
+		description: 'Whether to return all results or only up to a given limit',
+	},
+	// Limit (for Get Many when Return All is false)
+	{
+		displayName: 'Limit',
+		name: 'limit',
+		type: 'number',
+		default: 50,
+		typeOptions: {
+			minValue: 1,
+			maxValue: 5000,
+		},
+		displayOptions: {
+			show: {
+				resource: ['subscriber'],
+				operation: ['getMany'],
+				returnAll: [false],
+			},
+		},
+		description: 'Max number of results to return',
+	},
 	// Subscriber ID (for Get, Update, Delete)
 	{
 		displayName: 'Subscriber ID',
@@ -432,19 +465,6 @@ export const subscriberDescription: INodeProperties[] = [
 			},
 		},
 		options: [
-			{
-				displayName: 'Per Page',
-				name: 'per_page',
-				type: 'number',
-				default: 25,
-				description: 'Number of results per page',
-				routing: {
-					send: {
-						type: 'query',
-						property: 'per_page',
-					},
-				},
-			},
 			{
 				displayName: 'Status',
 				name: 'status',

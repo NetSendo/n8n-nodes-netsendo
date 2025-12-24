@@ -16,6 +16,7 @@ With the NetSendo node, you can seamlessly interact with your Netsendo instance 
 - **Manage Lists**: Retrieve contact lists and their subscribers.
 - **Manage Tags**: Access and organize your tags.
 - **Dynamic Dropdowns**: Automatically loads your contact lists for easy selection.
+- **Webhook Triggers**: Automatically start workflows when subscriber events occur.
 
 ## 📦 Installation
 
@@ -42,7 +43,32 @@ To use this node, you need to connect it to your NetSendo installation.
     - **Base URL**: The URL of your NetSendo installation (e.g., `https://premium.gregciupek.com`). _Do not include `/api/v1` at the end._
     - **API Key**: Your personal API token. You can generate this in your NetSendo dashboard under **Settings > API Keys** (format: `ns_live_...`).
 
+> **Note**: For using triggers, your API key must have `webhooks:read` and `webhooks:write` permissions.
+
 ## 🛠️ Operations
+
+### ⚡ NetSendo Trigger
+
+Start workflows automatically when subscriber events occur in NetSendo.
+
+**Supported Events:**
+
+- `subscriber.created` - New subscriber added
+- `subscriber.updated` - Subscriber data changed
+- `subscriber.deleted` - Subscriber removed
+- `subscriber.subscribed` - Subscriber confirmed subscription
+- `subscriber.unsubscribed` - Subscriber opted out
+- `subscriber.bounced` - Email bounced
+- `subscriber.tag_added` - Tag assigned to subscriber
+- `subscriber.tag_removed` - Tag removed from subscriber
+
+**How it works:**
+
+1. Add "NetSendo Trigger" to your workflow
+2. Select events to listen for
+3. Activate the workflow
+4. Webhook is automatically registered in NetSendo
+5. When events occur, your workflow runs automatically
 
 ### 📂 Resource: List
 

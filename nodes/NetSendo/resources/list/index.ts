@@ -101,6 +101,39 @@ export const listDescription: INodeProperties[] = [
 		},
 		description: 'Select a contact list. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
+	// Return All (for Get Subscribers)
+	{
+		displayName: 'Return All',
+		name: 'returnAll',
+		type: 'boolean',
+		default: false,
+		displayOptions: {
+			show: {
+				resource: ['list'],
+				operation: ['getSubscribers'],
+			},
+		},
+		description: 'Whether to return all results or only up to a given limit',
+	},
+	// Limit (for Get Subscribers when Return All is false)
+	{
+		displayName: 'Limit',
+		name: 'limit',
+		type: 'number',
+		default: 50,
+		typeOptions: {
+			minValue: 1,
+			maxValue: 5000,
+		},
+		displayOptions: {
+			show: {
+				resource: ['list'],
+				operation: ['getSubscribers'],
+				returnAll: [false],
+			},
+		},
+		description: 'Max number of results to return',
+	},
 	// Options for Get Many
 	{
 		displayName: 'Options',
@@ -176,19 +209,6 @@ export const listDescription: INodeProperties[] = [
 			},
 		},
 		options: [
-			{
-				displayName: 'Per Page',
-				name: 'per_page',
-				type: 'number',
-				default: 25,
-				description: 'Number of results per page',
-				routing: {
-					send: {
-						type: 'query',
-						property: 'per_page',
-					},
-				},
-			},
 			{
 				displayName: 'Status',
 				name: 'status',

@@ -1,0 +1,14 @@
+{
+	"node": "n8n-nodes-base.netSendoTrigger",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Marketing & Content"],
+	"resources": {
+		"primaryDocumentation": [
+			{
+				"url": "https://github.com/NetSendo/NetSendo"
+			}
+		]
+	},
+	"alias": ["email", "newsletter", "marketing", "subscribers", "webhook", "trigger"]
+}

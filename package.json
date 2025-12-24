@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-netsendo",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"description": "n8n community node for NetSendo Email Marketing Platform",
 	"license": "MIT",
 	"homepage": "https://github.com/NetSendo/n8n-nodes-netsendo",
@@ -38,11 +38,13 @@
 			"dist/credentials/NetSendoApi.credentials.js"
 		],
 		"nodes": [
-			"dist/nodes/NetSendo/NetSendo.node.js"
+			"dist/nodes/NetSendo/NetSendo.node.js",
+			"dist/nodes/NetSendo/NetSendoTrigger.node.js"
 		]
 	},
 	"devDependencies": {
 		"@n8n/node-cli": "*",
+		"@types/node": "^25.0.3",
 		"eslint": "9.32.0",
 		"prettier": "3.6.2",
 		"release-it": "^19.0.4",
