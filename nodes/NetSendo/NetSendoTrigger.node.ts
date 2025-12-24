@@ -19,6 +19,7 @@ export class NetSendoTrigger implements INodeType {
 		defaults: {
 			name: 'NetSendo Trigger',
 		},
+		usableAsTool: true,
 		inputs: [],
 		outputs: [NodeConnectionTypes.Main],
 		credentials: [
@@ -113,7 +114,7 @@ export class NetSendoTrigger implements INodeType {
 								Authorization: `Bearer ${credentials.apiKey}`,
 							},
 						});
-					} catch (error) {
+					} catch {
 						// Webhook may already be deleted, ignore error
 					}
 				}
