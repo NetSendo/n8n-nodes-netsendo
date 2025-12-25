@@ -2,9 +2,10 @@
 
 # n8n-nodes-netsendo
 
-[![npm version](https://badge.fury.io/js/n8n-nodes-netsendo.svg)](https://www.npmjs.com/package/n8n-nodes-netsendo)
+[![npm version](https://img.shields.io/npm/v/n8n-nodes-netsendo.svg?label=version)](https://www.npmjs.com/package/n8n-nodes-netsendo)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![n8n community](https://img.shields.io/badge/n8n-community%20node-orange)](https://n8n.io)
+[![Current Version](https://img.shields.io/badge/release-v1.2.3-blue.svg)](https://github.com/NetSendo/n8n-nodes-netsendo/releases)
 
 This is an n8n community node for **[NetSendo](https://netsendo.com)** – a powerful, self-hosted email & SMS marketing automation platform.
 
@@ -222,7 +223,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) f
 
 ## 💬 Support
 
-- 📧 Email: [contact@netsendo.com](mailto:contact@netsendo.com)
+- 📧 Email: [grzegorzciupek@gmail.com](mailto:grzegorzciupek@gmail.com)
 - 🐛 Issues: [GitHub Issues](https://github.com/NetSendo/n8n-nodes-netsendo/issues)
 
 ---
