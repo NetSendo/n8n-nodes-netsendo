@@ -115,7 +115,6 @@ export const smsDescription: INodeProperties[] = [
 			loadOptionsMethod: 'getLists',
 		},
 		default: '',
-		required: false,
 		displayOptions: {
 			show: {
 				resource: ['sms'],
@@ -126,7 +125,7 @@ export const smsDescription: INodeProperties[] = [
 	},
 	// Phone Number (for Send) - dynamic dropdown based on selected list or manual input
 	{
-		displayName: 'Phone Number or Subscriber',
+		displayName: 'Phone Number Name or ID',
 		name: 'phoneNumber',
 		type: 'options',
 		typeOptions: {
@@ -144,7 +143,7 @@ export const smsDescription: INodeProperties[] = [
 				smsContactListId: [''],
 			},
 		},
-		description: 'Select a subscriber with phone number from the list, or specify a phone number using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 		routing: {
 			send: {
 				type: 'body',
