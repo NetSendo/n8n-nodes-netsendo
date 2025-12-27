@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-netsendo",
-	"version": "1.2.6",
+	"version": "1.2.7",
 	"description": "n8n community node for NetSendo Email & SMS Marketing Platform",
 	"license": "MIT",
 	"homepage": "https://netsendo.com",
