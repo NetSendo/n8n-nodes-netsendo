@@ -12,6 +12,7 @@ import { smsDescription } from './resources/sms';
 import { subscriberDescription } from './resources/subscriber';
 import { tagDescription } from './resources/tag';
 import { getLists } from './listSearch/getLists';
+import { getSubscribersWithPhone } from './listSearch/getSubscribersWithPhone';
 
 /**
  * Fetch all pages from a paginated API endpoint (Laravel pagination)
@@ -131,6 +132,7 @@ export class NetSendo implements INodeType {
 	methods = {
 		loadOptions: {
 			getLists,
+			getSubscribersWithPhone,
 		},
 	};
 

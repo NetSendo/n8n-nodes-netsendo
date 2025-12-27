@@ -5,7 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/n8n-nodes-netsendo.svg?label=version)](https://www.npmjs.com/package/n8n-nodes-netsendo)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![n8n community](https://img.shields.io/badge/n8n-community%20node-orange)](https://n8n.io)
-[![Current Version](https://img.shields.io/badge/release-v1.2.3-blue.svg)](https://github.com/NetSendo/n8n-nodes-netsendo/releases)
+[![Current Version](https://img.shields.io/badge/release-v1.2.6-blue.svg)](https://github.com/NetSendo/n8n-nodes-netsendo/releases)
 
 This is an n8n community node for **[NetSendo](https://netsendo.com)** – a powerful, self-hosted email & SMS marketing automation platform.
 
@@ -15,12 +15,12 @@ Automate your marketing workflows directly within [n8n](https://n8n.io), connect
 
 ## 🚀 Features
 
-| Feature                  | Description                                     |
-| ------------------------ | ----------------------------------------------- |
-| 📧 **Email Marketing**   | Manage subscribers, lists, and tags             |
-| 📱 **SMS Marketing**     | Send single & batch SMS messages                |
-| 🔄 **Webhook Triggers**  | React to subscriber and SMS events in real-time |
-| 📋 **Dynamic Dropdowns** | Automatically loads your contact lists          |
+| Feature                  | Description                                                    |
+| ------------------------ | -------------------------------------------------------------- |
+| 📧 **Email Marketing**   | Manage subscribers, lists, and tags                            |
+| 📱 **SMS Marketing**     | Send single & batch SMS with scheduling and subscriber linking |
+| 🔄 **Webhook Triggers**  | React to subscriber and SMS events in real-time                |
+| 📋 **Dynamic Dropdowns** | Auto-loads contact lists and subscribers with phone numbers    |
 
 ---
 
@@ -172,12 +172,19 @@ Start workflows automatically when events occur.
 | **Get Status**     | Check delivery status of an SMS         |
 | **List Providers** | Get available SMS providers             |
 
+**✨ Smart Features:**
+
+- **Dynamic Subscriber Selection**: Select a contact list → get dropdown with subscribers who have phone numbers
+- **Schedule SMS**: Send messages at a specific time using the Schedule At field
+- **Subscriber Linking**: Link SMS to existing subscriber for tracking
+
 **Send SMS Example:**
 
 ```json
 {
 	"phone_number": "+48123456789",
-	"message": "Hello from NetSendo!"
+	"message": "Hello from NetSendo!",
+	"schedule_at": "2025-01-01T10:00:00Z"
 }
 ```
 

@@ -106,7 +106,53 @@ export const smsDescription: INodeProperties[] = [
 		default: 'send',
 	},
 	// ==================== SEND SMS ====================
-	// Phone Number (for Send)
+	// Contact List (optional - for loading subscribers with phone numbers)
+	{
+		displayName: 'Contact List Name or ID',
+		name: 'smsContactListId',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getLists',
+		},
+		default: '',
+		required: false,
+		displayOptions: {
+			show: {
+				resource: ['sms'],
+				operation: ['send'],
+			},
+		},
+		description: 'Optional: Select a contact list to load subscribers with phone numbers. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+	},
+	// Phone Number (for Send) - dynamic dropdown based on selected list or manual input
+	{
+		displayName: 'Phone Number or Subscriber',
+		name: 'phoneNumber',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getSubscribersWithPhone',
+			loadOptionsDependsOn: ['smsContactListId'],
+		},
+		default: '',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['sms'],
+				operation: ['send'],
+			},
+			hide: {
+				smsContactListId: [''],
+			},
+		},
+		description: 'Select a subscriber with phone number from the list, or specify a phone number using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		routing: {
+			send: {
+				type: 'body',
+				property: 'phone_number',
+			},
+		},
+	},
+	// Phone Number (for Send) - manual input when no list selected
 	{
 		displayName: 'Phone Number',
 		name: 'phoneNumber',
@@ -118,6 +164,7 @@ export const smsDescription: INodeProperties[] = [
 			show: {
 				resource: ['sms'],
 				operation: ['send'],
+				smsContactListId: [''],
 			},
 		},
 		description: 'Phone number to send SMS to (E.164 format recommended)',
@@ -189,6 +236,32 @@ export const smsDescription: INodeProperties[] = [
 					send: {
 						type: 'body',
 						property: 'sender_id',
+					},
+				},
+			},
+			{
+				displayName: 'Schedule At',
+				name: 'schedule_at',
+				type: 'dateTime',
+				default: '',
+				description: 'Schedule SMS for later delivery (ISO 8601 format)',
+				routing: {
+					send: {
+						type: 'body',
+						property: 'schedule_at',
+					},
+				},
+			},
+			{
+				displayName: 'Subscriber ID',
+				name: 'subscriber_id',
+				type: 'number',
+				default: 0,
+				description: 'Link SMS to an existing subscriber by their ID',
+				routing: {
+					send: {
+						type: 'body',
+						property: 'subscriber_id',
 					},
 				},
 			},
