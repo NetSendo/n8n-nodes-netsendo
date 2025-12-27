@@ -5,7 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/n8n-nodes-netsendo.svg?label=version)](https://www.npmjs.com/package/n8n-nodes-netsendo)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![n8n community](https://img.shields.io/badge/n8n-community%20node-orange)](https://n8n.io)
-[![Current Version](https://img.shields.io/badge/release-v1.2.6-blue.svg)](https://github.com/NetSendo/n8n-nodes-netsendo/releases)
+[![Current Version](https://img.shields.io/badge/release-v1.2.8-blue.svg)](https://github.com/NetSendo/n8n-nodes-netsendo/releases)
 
 This is an n8n community node for **[NetSendo](https://netsendo.com)** – a powerful, self-hosted email & SMS marketing automation platform.
 
@@ -15,12 +15,13 @@ Automate your marketing workflows directly within [n8n](https://n8n.io), connect
 
 ## 🚀 Features
 
-| Feature                  | Description                                                    |
-| ------------------------ | -------------------------------------------------------------- |
-| 📧 **Email Marketing**   | Manage subscribers, lists, and tags                            |
-| 📱 **SMS Marketing**     | Send single & batch SMS with scheduling and subscriber linking |
-| 🔄 **Webhook Triggers**  | React to subscriber and SMS events in real-time                |
-| 📋 **Dynamic Dropdowns** | Auto-loads contact lists and subscribers with phone numbers    |
+| Feature                  | Description                                                             |
+| ------------------------ | ----------------------------------------------------------------------- |
+| 📧 **Email Marketing**   | Send single & batch emails with scheduling, mailbox selection           |
+| 📱 **SMS Marketing**     | Send single & batch SMS with scheduling and subscriber linking          |
+| 👤 **Subscribers**       | Full CRUD operations for subscriber management                          |
+| 🔄 **Webhook Triggers**  | React to subscriber, email and SMS events in real-time                  |
+| 📋 **Dynamic Dropdowns** | Auto-loads contact lists, mailboxes, and subscribers with phone numbers |
 
 ---
 
@@ -106,6 +107,7 @@ This will watch for changes and automatically rebuild.
 > **Required permissions:**
 >
 > - For subscribers/lists: `subscribers:read`, `subscribers:write`, `lists:read`
+> - For email: `email:read`, `email:write`
 > - For SMS: `sms:read`, `sms:write`
 > - For triggers: `webhooks:read`, `webhooks:write`
 
@@ -123,11 +125,44 @@ Start workflows automatically when events occur.
 - `subscriber.subscribed` / `subscriber.unsubscribed` / `subscriber.bounced`
 - `subscriber.tag_added` / `subscriber.tag_removed`
 
+**Email Events:**
+
+- `email.queued` – Email message queued for sending
+
 **SMS Events:**
 
 - `sms.queued` – SMS message queued for sending
 - `sms.sent` – SMS successfully delivered
 - `sms.failed` – SMS delivery failed
+
+---
+
+### 📧 Resource: Email
+
+| Operation          | Description                          |
+| ------------------ | ------------------------------------ |
+| **Send**           | Send a single email message          |
+| **Send Batch**     | Send email to a contact list or tags |
+| **Get Status**     | Check delivery status of an email    |
+| **List Mailboxes** | Get available sender mailboxes       |
+
+**✨ Smart Features:**
+
+- **Mailbox Selection**: Choose sender mailbox from dropdown
+- **Schedule Email**: Send messages at a specific time
+- **Batch Targeting**: Target by list, tags, or subscriber IDs
+- **Excluded Lists**: Exclude specific lists from batch sends
+
+**Send Email Example:**
+
+```json
+{
+	"email": "user@example.com",
+	"subject": "Welcome!",
+	"content": "<h1>Hello!</h1><p>Welcome to our newsletter.</p>",
+	"schedule_at": "2025-01-01T10:00:00Z"
+}
+```
 
 ---
 
@@ -188,15 +223,6 @@ Start workflows automatically when events occur.
 }
 ```
 
-**Send Batch SMS Example:**
-
-```json
-{
-	"contact_list_id": 1,
-	"message": "Batch message to all subscribers"
-}
-```
-
 ---
 
 ## 📚 Resources
@@ -230,8 +256,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) f
 
 ## 💬 Support
 
-- 📧 Email: [grzegorzciupek@gmail.com](mailto:grzegorzciupek@gmail.com)
-- 🐛 Issues: [GitHub Issues](https://github.com/NetSendo/n8n-nodes-netsendo/issues)
+Need help? We're here for you!
+
+| Channel                | Link                                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------------------------ |
+| 🐛 **Report a Bug**    | [Submit Bug Report](https://github.com/NetSendo/NetSendo/issues/new?template=bug_report.md)      |
+| 💡 **Feature Request** | [Request a Feature](https://github.com/NetSendo/NetSendo/issues/new?template=feature_request.md) |
+| 📧 **Email Support**   | [grzegorzciupek@gmail.com](mailto:grzegorzciupek@gmail.com)                                      |
+| 💻 **Node Issues**     | [n8n-nodes-netsendo Issues](https://github.com/NetSendo/n8n-nodes-netsendo/issues)               |
 
 ---
 
