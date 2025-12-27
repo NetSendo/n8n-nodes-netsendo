@@ -11,8 +11,10 @@ import { listDescription } from './resources/list';
 import { smsDescription } from './resources/sms';
 import { subscriberDescription } from './resources/subscriber';
 import { tagDescription } from './resources/tag';
+import { emailDescription } from './resources/email';
 import { getLists } from './listSearch/getLists';
 import { getSubscribersWithPhone } from './listSearch/getSubscribersWithPhone';
+import { getMailboxes } from './listSearch/getMailboxes';
 
 /**
  * Fetch all pages from a paginated API endpoint (Laravel pagination)
@@ -100,6 +102,11 @@ export class NetSendo implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
+						name: 'Email',
+						value: 'email',
+						description: 'Send and manage email messages',
+					},
+					{
 						name: 'List',
 						value: 'list',
 						description: 'Manage contact lists',
@@ -122,6 +129,7 @@ export class NetSendo implements INodeType {
 				],
 				default: 'subscriber',
 			},
+			...emailDescription,
 			...listDescription,
 			...smsDescription,
 			...subscriberDescription,
@@ -133,6 +141,7 @@ export class NetSendo implements INodeType {
 		loadOptions: {
 			getLists,
 			getSubscribersWithPhone,
+			getMailboxes,
 		},
 	};
 
@@ -307,6 +316,100 @@ export class NetSendo implements INodeType {
 
 						for (const item of results) {
 							returnData.push({ json: item });
+						}
+					}
+				}
+
+				// ==================== EMAIL RESOURCE ====================
+				if (resource === 'email') {
+					if (operation === 'send') {
+						const emailAddress = this.getNodeParameter('emailAddress', i) as string;
+						const subject = this.getNodeParameter('subject', i) as string;
+						const content = this.getNodeParameter('content', i) as string;
+						const additionalFields = this.getNodeParameter('additionalFields', i, {}) as IDataObject;
+
+						const body: IDataObject = {
+							email: emailAddress,
+							subject,
+							content,
+							...additionalFields,
+						};
+
+						const response = await this.helpers.httpRequestWithAuthentication.call(
+							this,
+							'netSendoApi',
+							{
+								method: 'POST' as IHttpRequestMethods,
+								url: `${baseUrl}/email/send`,
+								body,
+							},
+						);
+						returnData.push({ json: response.data || response });
+					} else if (operation === 'sendBatch') {
+						const subject = this.getNodeParameter('subject', i) as string;
+						const content = this.getNodeParameter('content', i) as string;
+						const targetType = this.getNodeParameter('targetType', i) as string;
+						const mailboxId = this.getNodeParameter('mailboxId', i, '') as string;
+						const scheduleAt = this.getNodeParameter('scheduleAt', i, '') as string;
+						const excludedListIds = this.getNodeParameter('excludedListIds', i, []) as string[];
+
+						const body: IDataObject = {
+							subject,
+							content,
+						};
+
+						if (mailboxId) body.mailbox_id = mailboxId;
+						if (scheduleAt) body.schedule_at = scheduleAt;
+						if (excludedListIds.length) body.excluded_list_ids = excludedListIds;
+
+						if (targetType === 'list') {
+							body.contact_list_id = this.getNodeParameter('contactListId', i) as string;
+						} else if (targetType === 'tags') {
+							const tagsString = this.getNodeParameter('tags', i) as string;
+							body.tags = tagsString.split(',').map((tag) => tag.trim());
+						} else if (targetType === 'subscribers') {
+							const subscriberIdsString = this.getNodeParameter('subscriberIds', i) as string;
+							body.subscriber_ids = subscriberIdsString.split(',').map((id) => parseInt(id.trim()));
+						}
+
+						const response = await this.helpers.httpRequestWithAuthentication.call(
+							this,
+							'netSendoApi',
+							{
+								method: 'POST' as IHttpRequestMethods,
+								url: `${baseUrl}/email/batch`,
+								body,
+							},
+						);
+						returnData.push({ json: response.data || response });
+					} else if (operation === 'getStatus') {
+						const emailId = this.getNodeParameter('emailId', i) as string;
+						const response = await this.helpers.httpRequestWithAuthentication.call(
+							this,
+							'netSendoApi',
+							{
+								method: 'GET' as IHttpRequestMethods,
+								url: `${baseUrl}/email/status/${emailId}`,
+							},
+						);
+						returnData.push({ json: response.data || response });
+					} else if (operation === 'listMailboxes') {
+						const response = await this.helpers.httpRequestWithAuthentication.call(
+							this,
+							'netSendoApi',
+							{
+								method: 'GET' as IHttpRequestMethods,
+								url: `${baseUrl}/email/mailboxes`,
+							},
+						);
+
+						const data = response.data || response;
+						if (Array.isArray(data)) {
+							for (const item of data) {
+								returnData.push({ json: item });
+							}
+						} else {
+							returnData.push({ json: data });
 						}
 					}
 				}
