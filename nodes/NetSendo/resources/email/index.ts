@@ -118,7 +118,7 @@ export const emailDescription: INodeProperties[] = [
 		},
 		default: '',
 		description:
-			'<strong>Available placeholders for personalization:</strong><br/><code>[[email]]</code> - Email address<br/><code>[[fname]]</code> - First name<br/><code>[[!fname]]</code> - First name (Polish vocative)<br/><code>[[lname]]</code> - Last name<br/><code>[[phone]]</code> - Phone number<br/><code>[[unsubscribe]]</code> - Unsubscribe link<br/><code>[[manage]]</code> - Preferences link<br/><code>[[custom_field]]</code> - Custom fields<br/><code>{{male|female}}</code> - Gender conditional',
+			'Use placeholders for personalization: [[email]], [[fname]], [[!fname]] (vocative), [[lname]], [[phone]], [[unsubscribe]], [[manage]], [[custom_field]], {{male|female}} (gender conditional)',
 	},
 	// ==================== SEND EMAIL ====================
 	// Email Address (for Send)

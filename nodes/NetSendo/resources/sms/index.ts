@@ -118,7 +118,7 @@ export const smsDescription: INodeProperties[] = [
 		},
 		default: '',
 		description:
-			'<strong>Available placeholders for personalization:</strong><br/><code>[[fname]]</code> - First name<br/><code>[[!fname]]</code> - First name (Polish vocative)<br/><code>[[lname]]</code> - Last name<br/><code>[[phone]]</code> - Phone number<br/><code>[[custom_field]]</code> - Custom fields<br/><code>{{male|female}}</code> - Gender conditional',
+			'Use placeholders for personalization: [[fname]], [[!fname]] (vocative), [[lname]], [[phone]], [[custom_field]], {{male|female}} (gender conditional)',
 	},
 	// ==================== SEND SMS ====================
 	// Contact List (optional - for loading subscribers with phone numbers)
