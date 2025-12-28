@@ -15,6 +15,7 @@ import { emailDescription } from './resources/email';
 import { getLists } from './listSearch/getLists';
 import { getSubscribersWithPhone } from './listSearch/getSubscribersWithPhone';
 import { getMailboxes } from './listSearch/getMailboxes';
+import { getCustomFields } from './listSearch/getCustomFields';
 
 /**
  * Fetch all pages from a paginated API endpoint (Laravel pagination)
@@ -142,6 +143,7 @@ export class NetSendo implements INodeType {
 			getLists,
 			getSubscribersWithPhone,
 			getMailboxes,
+			getCustomFields,
 		},
 	};
 
@@ -207,11 +209,29 @@ export class NetSendo implements INodeType {
 						const contactListId = this.getNodeParameter('contactListId', i) as string;
 						const additionalFields = this.getNodeParameter('additionalFields', i, {}) as IDataObject;
 
+						// Process custom fields
+						const customFieldsData = this.getNodeParameter('customFields', i, {}) as {
+							field?: Array<{ name: string; value: string }>;
+						};
+						const customFields: Record<string, string> = {};
+						if (customFieldsData.field) {
+							for (const field of customFieldsData.field) {
+								if (field.name && field.value !== undefined) {
+									customFields[field.name] = field.value;
+								}
+							}
+						}
+
 						const body: IDataObject = {
 							email,
 							contact_list_id: contactListId,
 							...additionalFields,
 						};
+
+						// Add custom_fields only if not empty
+						if (Object.keys(customFields).length > 0) {
+							body.custom_fields = customFields;
+						}
 
 						const response = await this.helpers.httpRequestWithAuthentication.call(
 							this,
@@ -227,13 +247,35 @@ export class NetSendo implements INodeType {
 						const subscriberId = this.getNodeParameter('subscriberId', i) as number;
 						const updateFields = this.getNodeParameter('updateFields', i, {}) as IDataObject;
 
+						// Process custom fields
+						const customFieldsData = this.getNodeParameter('customFields', i, {}) as {
+							field?: Array<{ name: string; value: string }>;
+						};
+						const customFields: Record<string, string> = {};
+						if (customFieldsData.field) {
+							for (const field of customFieldsData.field) {
+								if (field.name && field.value !== undefined) {
+									customFields[field.name] = field.value;
+								}
+							}
+						}
+
+						const body: IDataObject = {
+							...updateFields,
+						};
+
+						// Add custom_fields only if not empty
+						if (Object.keys(customFields).length > 0) {
+							body.custom_fields = customFields;
+						}
+
 						const response = await this.helpers.httpRequestWithAuthentication.call(
 							this,
 							'netSendoApi',
 							{
 								method: 'PUT' as IHttpRequestMethods,
 								url: `${baseUrl}/subscribers/${subscriberId}`,
-								body: updateFields,
+								body,
 							},
 						);
 						returnData.push({ json: response.data || response });

@@ -105,6 +105,21 @@ export const smsDescription: INodeProperties[] = [
 		],
 		default: 'send',
 	},
+	// Placeholders Notice
+	{
+		displayName: 'Available Placeholders',
+		name: 'placeholdersNotice',
+		type: 'notice',
+		displayOptions: {
+			show: {
+				resource: ['sms'],
+				operation: ['send', 'sendBatch'],
+			},
+		},
+		default: '',
+		description:
+			'<strong>Available placeholders for personalization:</strong><br/><code>[[fname]]</code> - First name<br/><code>[[!fname]]</code> - First name (Polish vocative)<br/><code>[[lname]]</code> - Last name<br/><code>[[phone]]</code> - Phone number<br/><code>[[custom_field]]</code> - Custom fields<br/><code>{{male|female}}</code> - Gender conditional',
+	},
 	// ==================== SEND SMS ====================
 	// Contact List (optional - for loading subscribers with phone numbers)
 	{

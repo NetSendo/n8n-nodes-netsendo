@@ -356,6 +356,52 @@ export const subscriberDescription: INodeProperties[] = [
 			},
 		],
 	},
+	// Custom Fields (for Create)
+	{
+		displayName: 'Custom Fields',
+		name: 'customFields',
+		type: 'fixedCollection',
+		typeOptions: {
+			multipleValues: true,
+		},
+		placeholder: 'Add Custom Field',
+		default: {},
+		displayOptions: {
+			show: {
+				resource: ['subscriber'],
+				operation: ['create'],
+			},
+		},
+		options: [
+			{
+				name: 'field',
+				displayName: 'Field',
+				values: [
+					{
+						displayName: 'Field Name or ID',
+						name: 'name',
+						type: 'options',
+						typeOptions: {
+							loadOptionsMethod: 'getCustomFields',
+						},
+						default: '',
+						description:
+							'Select a custom field from NetSendo. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+					},
+					{
+						displayName: 'Value',
+						name: 'value',
+						type: 'string',
+						default: '',
+						placeholder: 'Warszawa',
+						description: 'Value for the custom field',
+					},
+				],
+			},
+		],
+		description:
+			'Custom field values for personalization. Available as [[field_name]] placeholders in messages.',
+	},
 	// Update fields
 	{
 		displayName: 'Update Fields',
@@ -450,6 +496,52 @@ export const subscriberDescription: INodeProperties[] = [
 				},
 			},
 		],
+	},
+	// Custom Fields (for Update)
+	{
+		displayName: 'Custom Fields',
+		name: 'customFields',
+		type: 'fixedCollection',
+		typeOptions: {
+			multipleValues: true,
+		},
+		placeholder: 'Add Custom Field',
+		default: {},
+		displayOptions: {
+			show: {
+				resource: ['subscriber'],
+				operation: ['update'],
+			},
+		},
+		options: [
+			{
+				name: 'field',
+				displayName: 'Field',
+				values: [
+					{
+						displayName: 'Field Name or ID',
+						name: 'name',
+						type: 'options',
+						typeOptions: {
+							loadOptionsMethod: 'getCustomFields',
+						},
+						default: '',
+						description:
+							'Select a custom field from NetSendo. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+					},
+					{
+						displayName: 'Value',
+						name: 'value',
+						type: 'string',
+						default: '',
+						placeholder: 'Warszawa',
+						description: 'Value for the custom field',
+					},
+				],
+			},
+		],
+		description:
+			'Custom field values for personalization. Available as [[field_name]] placeholders in messages.',
 	},
 	// Options for Get Many
 	{
