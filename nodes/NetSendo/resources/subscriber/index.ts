@@ -288,6 +288,39 @@ export const subscriberDescription: INodeProperties[] = [
 		},
 		options: [
 			{
+				displayName: 'Client IP Address',
+				name: 'ip_address',
+				type: 'string',
+				default: '',
+				description:
+					'Real IP address of the end user. Useful when request comes through webhook/proxy.',
+				placeholder: '{{ $json.headers["x-forwarded-for"] }}',
+				routing: {
+					send: {
+						type: 'body',
+						property: 'ip_address',
+					},
+				},
+			},
+			{
+				displayName: 'Device Type',
+				name: 'device',
+				type: 'options',
+				options: [
+					{ name: 'Desktop', value: 'desktop' },
+					{ name: 'Mobile', value: 'mobile' },
+					{ name: 'Tablet', value: 'tablet' },
+				],
+				default: 'desktop',
+				description: 'Type of device used by the end user',
+				routing: {
+					send: {
+						type: 'body',
+						property: 'device',
+					},
+				},
+			},
+			{
 				displayName: 'First Name',
 				name: 'first_name',
 				type: 'string',
@@ -351,6 +384,20 @@ export const subscriberDescription: INodeProperties[] = [
 					send: {
 						type: 'body',
 						property: 'status',
+					},
+				},
+			},
+			{
+				displayName: 'User-Agent',
+				name: 'user_agent',
+				type: 'string',
+				default: '',
+				description: 'Browser User-Agent of the end user (max 500 characters)',
+				placeholder: '{{ $json.headers["user-agent"] }}',
+				routing: {
+					send: {
+						type: 'body',
+						property: 'user_agent',
 					},
 				},
 			},

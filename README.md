@@ -5,7 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/n8n-nodes-netsendo.svg?label=version)](https://www.npmjs.com/package/n8n-nodes-netsendo)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![n8n community](https://img.shields.io/badge/n8n-community%20node-orange)](https://n8n.io)
-[![Current Version](https://img.shields.io/badge/release-v1.2.8-blue.svg)](https://github.com/NetSendo/n8n-nodes-netsendo/releases)
+[![Current Version](https://img.shields.io/badge/release-v1.3.0-blue.svg)](https://github.com/NetSendo/n8n-nodes-netsendo/releases)
 
 This is an n8n community node for **[NetSendo](https://netsendo.com)** – a powerful, self-hosted email & SMS marketing automation platform.
 
@@ -186,6 +186,45 @@ Start workflows automatically when events occur.
 | **Create**       | Add new subscriber                                 |
 | **Update**       | Update subscriber data                             |
 | **Delete**       | Remove subscriber (soft delete)                    |
+
+**✨ Client Data Forwarding (New in v1.3.0):**
+
+When creating subscribers via Webhook, forward real user data:
+
+| Field           | Expression Example                       | Description                     |
+| --------------- | ---------------------------------------- | ------------------------------- |
+| **IP Address**  | `{{ $json.headers["x-forwarded-for"] }}` | Real IP address of the end user |
+| **User-Agent**  | `{{ $json.headers["user-agent"] }}`      | Browser User-Agent string       |
+| **Device Type** | desktop, mobile, or tablet               | Type of device                  |
+
+---
+
+### 🔍 Resource: Pixel (Tracking)
+
+| Operation              | Description                          |
+| ---------------------- | ------------------------------------ |
+| **Track Event**        | Track a single pixel event           |
+| **Batch Track Events** | Track multiple events in one request |
+
+**Track Event Fields:**
+
+- `user_id` (required) - ID of the user/subscriber
+- `visitor_token` (required) - Unique visitor token
+- `event_type` (required) - Type of event (e.g., page_view, click, purchase)
+- `page_url` (optional) - URL of the page where the event occurred
+- `client_ip` (optional) - Real IP address of the client
+
+**Track Event Example:**
+
+```json
+{
+	"user_id": 1,
+	"visitor_token": "abc-123-def",
+	"event_type": "page_view",
+	"page_url": "https://example.com/product",
+	"client_ip": "192.168.1.100"
+}
+```
 
 ---
 

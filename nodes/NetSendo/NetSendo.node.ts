@@ -12,6 +12,7 @@ import { smsDescription } from './resources/sms';
 import { subscriberDescription } from './resources/subscriber';
 import { tagDescription } from './resources/tag';
 import { emailDescription } from './resources/email';
+import { pixelDescription } from './resources/pixel';
 import { getLists } from './listSearch/getLists';
 import { getSubscribersWithPhone } from './listSearch/getSubscribersWithPhone';
 import { getMailboxes } from './listSearch/getMailboxes';
@@ -113,6 +114,11 @@ export class NetSendo implements INodeType {
 						description: 'Manage contact lists',
 					},
 					{
+						name: 'Pixel',
+						value: 'pixel',
+						description: 'Track pixel events for analytics',
+					},
+					{
 						name: 'SMS',
 						value: 'sms',
 						description: 'Send and manage SMS messages',
@@ -132,6 +138,7 @@ export class NetSendo implements INodeType {
 			},
 			...emailDescription,
 			...listDescription,
+			...pixelDescription,
 			...smsDescription,
 			...subscriberDescription,
 			...tagDescription,
@@ -572,6 +579,72 @@ export class NetSendo implements INodeType {
 							{
 								method: 'GET' as IHttpRequestMethods,
 								url: `${baseUrl}/tags/${tagId}`,
+							},
+						);
+						returnData.push({ json: response.data || response });
+					}
+				}
+
+				// ==================== PIXEL RESOURCE ====================
+				if (resource === 'pixel') {
+					// Pixel API uses different base URL: /t/pixel/ instead of /api/v1/
+					const pixelBaseUrl = baseUrl.replace('/api/v1', '');
+
+					if (operation === 'trackEvent') {
+						const userId = this.getNodeParameter('userId', i) as number;
+						const visitorToken = this.getNodeParameter('visitorToken', i) as string;
+						const eventType = this.getNodeParameter('eventType', i) as string;
+						const additionalFields = this.getNodeParameter('additionalFields', i, {}) as IDataObject;
+
+						const body: IDataObject = {
+							user_id: userId,
+							visitor_token: visitorToken,
+							event_type: eventType,
+						};
+
+						// Add optional fields only if provided (avoid sending empty strings)
+						if (additionalFields.page_url) body.page_url = additionalFields.page_url;
+						if (additionalFields.client_ip) body.client_ip = additionalFields.client_ip;
+
+						const response = await this.helpers.httpRequestWithAuthentication.call(
+							this,
+							'netSendoApi',
+							{
+								method: 'POST' as IHttpRequestMethods,
+								url: `${pixelBaseUrl}/t/pixel/event`,
+								body,
+							},
+						);
+						returnData.push({ json: response.data || response });
+					} else if (operation === 'batchTrackEvents') {
+						const eventsData = this.getNodeParameter('events', i, {}) as {
+							event?: Array<{
+								user_id: number;
+								visitor_token: string;
+								event_type: string;
+								page_url?: string;
+								client_ip?: string;
+							}>;
+						};
+
+						const events = (eventsData.event || []).map((e) => {
+							const event: IDataObject = {
+								user_id: e.user_id,
+								visitor_token: e.visitor_token,
+								event_type: e.event_type,
+							};
+							if (e.page_url) event.page_url = e.page_url;
+							if (e.client_ip) event.client_ip = e.client_ip;
+							return event;
+						});
+
+						const response = await this.helpers.httpRequestWithAuthentication.call(
+							this,
+							'netSendoApi',
+							{
+								method: 'POST' as IHttpRequestMethods,
+								url: `${pixelBaseUrl}/t/pixel/batch`,
+								body: { events },
 							},
 						);
 						returnData.push({ json: response.data || response });
