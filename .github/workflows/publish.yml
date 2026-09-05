@@ -1,0 +1,101 @@
+# Publishes this n8n community node to npm on every version tag push.
+#
+# Since 1 May 2026 n8n requires community nodes to be published from GitHub
+# Actions with an npm provenance statement. A package published by hand from a
+# laptop carries no attestation, so this workflow — not `npm publish` on a
+# developer machine — is the release path.
+#
+# ─── AUTHENTICATION: OIDC Trusted Publishing, no token stored ─────────────────
+#
+# GitHub Actions proves its identity to npm, npm returns a short-lived
+# credential and attaches provenance automatically. An automation token is not
+# an alternative: with 2FA on the account npm answers `EOTP` (one-time password
+# required) and a workflow has no way to supply one.
+#
+# ─── ONE-TIME SETUP (until this is done, publishing fails) ────────────────────
+#
+#   1. npmjs.com → package `n8n-nodes-netsendo` → Settings
+#   2. "Publish access" → "Trusted Publishers" → "Add a publisher"
+#   3. GitHub Actions, filled in EXACTLY:
+#        Repository owner:  NetSendo
+#        Repository name:   n8n-nodes-netsendo
+#        Workflow filename: publish.yml
+#        Environment:       NPM_TOKEN     ← must match `environment:` below
+#
+# ⚠️ Before step 3 npm rejects the PUT with a 404 — it reports "not found" for
+#    packages the caller may not write to.
+#
+# ─── RELEASING ───────────────────────────────────────────────────────────────
+#
+#   npm version patch -m 'Release %s'   # bumps package.json, commits, tags
+#   git push && git push --tags         # the tag is what triggers this workflow
+#
+# Do NOT use `npm run release` (release-it) any more: it publishes straight from
+# the laptop, which produces a release without provenance and races this
+# workflow for the same version.
+
+name: Publish
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+
+    # Scopes the trusted-publisher entry. If the publisher is configured WITHOUT
+    # an environment, delete this line — a mismatch is rejected as untrusted.
+    environment: NPM_TOKEN
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      # Trusted Publishing needs npm >= 11.5.1; Node LTS still ships npm 10.x,
+      # which ignores OIDC and looks for a token instead.
+      - name: Upgrade npm for OIDC support
+        run: |
+          npm install -g npm@latest
+          npm --version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      # A re-run on an already-published tag would otherwise fail on a version
+      # conflict and look like a broken pipeline.
+      - name: Check whether this version is already published
+        id: check
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if npm view "n8n-nodes-netsendo@$VERSION" version >/dev/null 2>&1; then
+            echo "already=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::n8n-nodes-netsendo@$VERSION is already on npm — skipping publish."
+          else
+            echo "already=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # No NODE_AUTH_TOKEN on purpose: npm exchanges the GitHub OIDC token for a
+      # short-lived credential and attaches provenance itself.
+      - name: Publish to npm
+        if: steps.check.outputs.already == 'false'
+        run: npm publish --access public
