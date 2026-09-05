@@ -8,6 +8,8 @@ import type {
 } from 'n8n-workflow';
 import { NodeConnectionTypes } from 'n8n-workflow';
 
+import { reportHeartbeat } from './shared/heartbeat';
+
 export class NetSendoTrigger implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'NetSendo Trigger',
@@ -43,12 +45,15 @@ export class NetSendoTrigger implements INodeType {
 				type: 'multiOptions',
 				options: [
 					{ name: 'Email Queued', value: 'email.queued' },
+					{ name: 'Payment Refunded (Stripe)', value: 'stripe.payment_refunded' },
+					{ name: 'Purchase Completed (Stripe)', value: 'stripe.purchase_completed' },
 					{ name: 'SMS Failed', value: 'sms.failed' },
 					{ name: 'SMS Queued', value: 'sms.queued' },
 					{ name: 'SMS Sent', value: 'sms.sent' },
 					{ name: 'Subscriber Bounced', value: 'subscriber.bounced' },
 					{ name: 'Subscriber Created', value: 'subscriber.created' },
 					{ name: 'Subscriber Deleted', value: 'subscriber.deleted' },
+					{ name: 'Subscriber Resubscribed', value: 'subscriber.resubscribed' },
 					{ name: 'Subscriber Subscribed', value: 'subscriber.subscribed' },
 					{ name: 'Subscriber Unsubscribed', value: 'subscriber.unsubscribed' },
 					{ name: 'Subscriber Updated', value: 'subscriber.updated' },
@@ -98,6 +103,11 @@ export class NetSendoTrigger implements INodeType {
 				const webhookData = this.getWorkflowStaticData('node');
 				webhookData.webhookId = (response.data as IDataObject).id;
 				webhookData.webhookSecret = (response.data as IDataObject).secret;
+
+				// Report this installation and its node version to NetSendo.
+				// Activating a trigger is the natural low-frequency moment for
+				// it; the call cannot fail the activation.
+				await reportHeartbeat.call(this, webhookUrl);
 
 				return true;
 			},
