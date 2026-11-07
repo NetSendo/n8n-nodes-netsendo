@@ -5,7 +5,7 @@ import type { IHookFunctions, IExecuteFunctions } from 'n8n-workflow';
  * the platform compares it against its own plugin registry to tell the account
  * owner which n8n instances are running an outdated node.
  */
-export const NODE_VERSION = '1.3.3';
+export const NODE_VERSION = '1.3.4';
 
 /**
  * Tell NetSendo that this n8n instance is running the node, and which version.
