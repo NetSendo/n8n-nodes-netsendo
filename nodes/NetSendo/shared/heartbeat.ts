@@ -36,11 +36,10 @@ export async function reportHeartbeat(
 			return; // No usable instance URL — nothing worth reporting
 		}
 
-		await this.helpers.httpRequest({
+		await this.helpers.httpRequestWithAuthentication.call(this, 'netSendoApi', {
 			method: 'POST',
 			url: `${baseUrl}/api/v1/plugin/heartbeat`,
 			headers: {
-				Authorization: `Bearer ${credentials.apiKey}`,
 				'Content-Type': 'application/json',
 			},
 			body: {

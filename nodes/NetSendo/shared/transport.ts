@@ -9,7 +9,7 @@ import type {
 
 /**
  * Make an API request to NetSendo
- * Handles baseUrl normalization and Bearer auth
+ * Normalizes baseUrl; the Bearer header comes from the credential's `authenticate`
  */
 export async function netSendoApiRequest(
 	this: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions,
@@ -29,7 +29,6 @@ export async function netSendoApiRequest(
 		qs,
 		json: true,
 		headers: {
-			Authorization: `Bearer ${credentials.apiKey}`,
 			'Content-Type': 'application/json',
 			Accept: 'application/json',
 		},
@@ -39,5 +38,5 @@ export async function netSendoApiRequest(
 		options.body = body;
 	}
 
-	return this.helpers.httpRequest(options);
+	return this.helpers.httpRequestWithAuthentication.call(this, 'netSendoApi', options);
 }

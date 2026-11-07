@@ -18,11 +18,11 @@ export class NetSendoTrigger implements INodeType {
 		icon: 'file:../../icons/netsendo.svg',
 		group: ['trigger'],
 		version: 1,
+		subtitle: '={{$parameter["events"].join(", ")}}',
 		description: 'Starts the workflow when NetSendo events occur',
 		defaults: {
 			name: 'NetSendo Trigger',
 		},
-		usableAsTool: true,
 		inputs: [],
 		outputs: [NodeConnectionTypes.Main],
 		credentials: [
@@ -90,16 +90,20 @@ export class NetSendoTrigger implements INodeType {
 					events: events,
 				};
 
-				const response = await this.helpers.httpRequest({
-					method: 'POST',
-					url: `${baseUrl}/api/v1/webhooks`,
-					headers: {
-						Authorization: `Bearer ${credentials.apiKey}`,
-						'Content-Type': 'application/json',
+				// The credential's `authenticate` block adds the Bearer header.
+				const response = await this.helpers.httpRequestWithAuthentication.call(
+					this,
+					'netSendoApi',
+					{
+						method: 'POST',
+						url: `${baseUrl}/api/v1/webhooks`,
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: body,
+						json: true,
 					},
-					body: body,
-					json: true,
-				});
+				);
 
 				const webhookData = this.getWorkflowStaticData('node');
 				webhookData.webhookId = (response.data as IDataObject).id;
@@ -122,15 +126,18 @@ export class NetSendoTrigger implements INodeType {
 
 				if (webhookData.webhookId) {
 					try {
-						await this.helpers.httpRequest({
+						await this.helpers.httpRequestWithAuthentication.call(this, 'netSendoApi', {
 							method: 'DELETE',
 							url: `${baseUrl}/api/v1/webhooks/${webhookData.webhookId}`,
-							headers: {
-								Authorization: `Bearer ${credentials.apiKey}`,
-							},
 						});
-					} catch {
-						// Webhook may already be deleted, ignore error
+					} catch (error) {
+						// Usually the webhook is already gone in NetSendo. Deactivation
+						// still goes ahead, but the reason is logged in case it was not.
+						this.logger.warn(
+							`NetSendo Trigger: could not delete webhook ${webhookData.webhookId as string}: ${
+								(error as Error).message
+							}`,
+						);
 					}
 				}
 

@@ -1,6 +1,8 @@
 import {
+	NodeApiError,
 	NodeConnectionTypes,
 	type IExecuteFunctions,
+	type JsonObject,
 	type INodeExecutionData,
 	type INodeType,
 	type INodeTypeDescription,
@@ -187,7 +189,7 @@ export class NetSendo implements INodeType {
 						const results = await fetchAllPages(this, baseUrl, '/subscribers', qs, returnAll, limit);
 
 						for (const item of results) {
-							returnData.push({ json: item });
+							returnData.push({ json: item, pairedItem: { item: i } });
 						}
 					} else if (operation === 'get') {
 						const subscriberId = this.getNodeParameter('subscriberId', i) as number;
@@ -199,7 +201,7 @@ export class NetSendo implements INodeType {
 								url: `${baseUrl}/subscribers/${subscriberId}`,
 							},
 						);
-						returnData.push({ json: response.data || response });
+						returnData.push({ json: response.data || response, pairedItem: { item: i } });
 					} else if (operation === 'getByEmail') {
 						const email = this.getNodeParameter('email', i) as string;
 						const response = await this.helpers.httpRequestWithAuthentication.call(
@@ -210,7 +212,7 @@ export class NetSendo implements INodeType {
 								url: `${baseUrl}/subscribers/by-email/${encodeURIComponent(email)}`,
 							},
 						);
-						returnData.push({ json: response.data || response });
+						returnData.push({ json: response.data || response, pairedItem: { item: i } });
 					} else if (operation === 'create') {
 						const email = this.getNodeParameter('email', i) as string;
 						const contactListId = this.getNodeParameter('contactListId', i) as string;
@@ -249,7 +251,7 @@ export class NetSendo implements INodeType {
 								body,
 							},
 						);
-						returnData.push({ json: response.data || response });
+						returnData.push({ json: response.data || response, pairedItem: { item: i } });
 					} else if (operation === 'update') {
 						const subscriberId = this.getNodeParameter('subscriberId', i) as number;
 						const updateFields = this.getNodeParameter('updateFields', i, {}) as IDataObject;
@@ -285,7 +287,7 @@ export class NetSendo implements INodeType {
 								body,
 							},
 						);
-						returnData.push({ json: response.data || response });
+						returnData.push({ json: response.data || response, pairedItem: { item: i } });
 					} else if (operation === 'delete') {
 						const subscriberId = this.getNodeParameter('subscriberId', i) as number;
 						const response = await this.helpers.httpRequestWithAuthentication.call(
@@ -296,7 +298,7 @@ export class NetSendo implements INodeType {
 								url: `${baseUrl}/subscribers/${subscriberId}`,
 							},
 						);
-						returnData.push({ json: response.data || response || { success: true } });
+						returnData.push({ json: response.data || response || { success: true }, pairedItem: { item: i } });
 					}
 				}
 
@@ -323,10 +325,10 @@ export class NetSendo implements INodeType {
 						const data = response.data || response;
 						if (Array.isArray(data)) {
 							for (const item of data) {
-								returnData.push({ json: item });
+								returnData.push({ json: item, pairedItem: { item: i } });
 							}
 						} else {
-							returnData.push({ json: data });
+							returnData.push({ json: data, pairedItem: { item: i } });
 						}
 					} else if (operation === 'get') {
 						const listId = this.getNodeParameter('listId', i) as string;
@@ -338,7 +340,7 @@ export class NetSendo implements INodeType {
 								url: `${baseUrl}/lists/${listId}`,
 							},
 						);
-						returnData.push({ json: response.data || response });
+						returnData.push({ json: response.data || response, pairedItem: { item: i } });
 					} else if (operation === 'getSubscribers') {
 						// Paginated operation
 						const returnAll = this.getNodeParameter('returnAll', i) as boolean;
@@ -364,7 +366,7 @@ export class NetSendo implements INodeType {
 						);
 
 						for (const item of results) {
-							returnData.push({ json: item });
+							returnData.push({ json: item, pairedItem: { item: i } });
 						}
 					}
 				}
@@ -393,7 +395,7 @@ export class NetSendo implements INodeType {
 								body,
 							},
 						);
-						returnData.push({ json: response.data || response });
+						returnData.push({ json: response.data || response, pairedItem: { item: i } });
 					} else if (operation === 'sendBatch') {
 						const subject = this.getNodeParameter('subject', i) as string;
 						const content = this.getNodeParameter('content', i) as string;
@@ -430,7 +432,7 @@ export class NetSendo implements INodeType {
 								body,
 							},
 						);
-						returnData.push({ json: response.data || response });
+						returnData.push({ json: response.data || response, pairedItem: { item: i } });
 					} else if (operation === 'getStatus') {
 						const emailId = this.getNodeParameter('emailId', i) as string;
 						const response = await this.helpers.httpRequestWithAuthentication.call(
@@ -441,7 +443,7 @@ export class NetSendo implements INodeType {
 								url: `${baseUrl}/email/status/${emailId}`,
 							},
 						);
-						returnData.push({ json: response.data || response });
+						returnData.push({ json: response.data || response, pairedItem: { item: i } });
 					} else if (operation === 'listMailboxes') {
 						const response = await this.helpers.httpRequestWithAuthentication.call(
 							this,
@@ -455,10 +457,10 @@ export class NetSendo implements INodeType {
 						const data = response.data || response;
 						if (Array.isArray(data)) {
 							for (const item of data) {
-								returnData.push({ json: item });
+								returnData.push({ json: item, pairedItem: { item: i } });
 							}
 						} else {
-							returnData.push({ json: data });
+							returnData.push({ json: data, pairedItem: { item: i } });
 						}
 					}
 				}
@@ -485,7 +487,7 @@ export class NetSendo implements INodeType {
 								body,
 							},
 						);
-						returnData.push({ json: response.data || response });
+						returnData.push({ json: response.data || response, pairedItem: { item: i } });
 					} else if (operation === 'sendBatch') {
 						const message = this.getNodeParameter('message', i) as string;
 						const targetType = this.getNodeParameter('targetType', i) as string;
@@ -512,7 +514,7 @@ export class NetSendo implements INodeType {
 								body,
 							},
 						);
-						returnData.push({ json: response.data || response });
+						returnData.push({ json: response.data || response, pairedItem: { item: i } });
 					} else if (operation === 'getStatus') {
 						const smsId = this.getNodeParameter('smsId', i) as string;
 						const response = await this.helpers.httpRequestWithAuthentication.call(
@@ -523,7 +525,7 @@ export class NetSendo implements INodeType {
 								url: `${baseUrl}/sms/status/${smsId}`,
 							},
 						);
-						returnData.push({ json: response.data || response });
+						returnData.push({ json: response.data || response, pairedItem: { item: i } });
 					} else if (operation === 'listProviders') {
 						const response = await this.helpers.httpRequestWithAuthentication.call(
 							this,
@@ -537,10 +539,10 @@ export class NetSendo implements INodeType {
 						const data = response.data || response;
 						if (Array.isArray(data)) {
 							for (const item of data) {
-								returnData.push({ json: item });
+								returnData.push({ json: item, pairedItem: { item: i } });
 							}
 						} else {
-							returnData.push({ json: data });
+							returnData.push({ json: data, pairedItem: { item: i } });
 						}
 					}
 				}
@@ -566,10 +568,10 @@ export class NetSendo implements INodeType {
 						const data = response.data || response;
 						if (Array.isArray(data)) {
 							for (const item of data) {
-								returnData.push({ json: item });
+								returnData.push({ json: item, pairedItem: { item: i } });
 							}
 						} else {
-							returnData.push({ json: data });
+							returnData.push({ json: data, pairedItem: { item: i } });
 						}
 					} else if (operation === 'get') {
 						const tagId = this.getNodeParameter('tagId', i) as number;
@@ -581,7 +583,7 @@ export class NetSendo implements INodeType {
 								url: `${baseUrl}/tags/${tagId}`,
 							},
 						);
-						returnData.push({ json: response.data || response });
+						returnData.push({ json: response.data || response, pairedItem: { item: i } });
 					}
 				}
 
@@ -615,7 +617,7 @@ export class NetSendo implements INodeType {
 								body,
 							},
 						);
-						returnData.push({ json: response.data || response });
+						returnData.push({ json: response.data || response, pairedItem: { item: i } });
 					} else if (operation === 'batchTrackEvents') {
 						const eventsData = this.getNodeParameter('events', i, {}) as {
 							event?: Array<{
@@ -647,15 +649,18 @@ export class NetSendo implements INodeType {
 								body: { events },
 							},
 						);
-						returnData.push({ json: response.data || response });
+						returnData.push({ json: response.data || response, pairedItem: { item: i } });
 					}
 				}
 			} catch (error) {
 				if (this.continueOnFail()) {
-					returnData.push({ json: { error: (error as Error).message } });
+					returnData.push({ json: { error: (error as Error).message }, pairedItem: { item: i } });
 					continue;
 				}
-				throw error;
+				// httpRequestWithAuthentication already throws NodeApiError, which
+				// the constructor hands back unchanged; anything else gets wrapped
+				// so n8n shows the HTTP details and which item failed.
+				throw new NodeApiError(this.getNode(), error as JsonObject, { itemIndex: i });
 			}
 		}
 
