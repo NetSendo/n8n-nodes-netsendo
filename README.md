@@ -5,7 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/n8n-nodes-netsendo.svg?label=version)](https://www.npmjs.com/package/n8n-nodes-netsendo)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![n8n community](https://img.shields.io/badge/n8n-community%20node-orange)](https://n8n.io)
-[![Current Version](https://img.shields.io/badge/release-v1.3.0-blue.svg)](https://github.com/NetSendo/n8n-nodes-netsendo/releases)
+[![Latest release](https://img.shields.io/github/v/tag/NetSendo/n8n-nodes-netsendo?sort=semver&label=release)](https://github.com/NetSendo/n8n-nodes-netsendo/releases)
 
 This is an n8n community node for **[NetSendo](https://netsendo.com)** – a powerful, self-hosted email & SMS marketing automation platform.
 
@@ -189,7 +189,7 @@ Start workflows automatically when events occur.
 | **Update**       | Update subscriber data                             |
 | **Delete**       | Remove subscriber (soft delete)                    |
 
-**✨ Client Data Forwarding (New in v1.3.0):**
+**✨ Client Data Forwarding (New in v1.3.1):**
 
 When creating subscribers via Webhook, forward real user data:
 
