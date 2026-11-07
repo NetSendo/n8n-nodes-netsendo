@@ -1,0 +1,5 @@
+{
+    "secret": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01",
+    "body": "{\"event\":\"subscriber.created\",\"timestamp\":\"2026-11-07T10:15:30.123456Z\",\"data\":{\"subscriber_id\":42,\"email\":\"jan.kowalski@example.com\",\"first_name\":\"Za\\u017c\\u00f3\\u0142\\u0107\",\"last_name\":\"G\\u0119\\u015bl\\u0105 Ja\\u017a\\u0144\",\"source_url\":\"https:\\/\\/example.com\\/zapisz-sie?ref=n8n&utm=a\\/b\",\"list\":{\"id\":7,\"name\":\"Newsletter \\u2014 \\u20acuro\"}}}",
+    "signature": "65594b83d0bb07787cb104d7dcb1f69184d42b86e88702a1a04d9518904b336c"
+}

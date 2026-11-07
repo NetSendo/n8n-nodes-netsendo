@@ -135,6 +135,8 @@ Start workflows automatically when events occur.
 - `sms.sent` – SMS successfully delivered
 - `sms.failed` – SMS delivery failed
 
+**Signature verification:** when the trigger is activated, NetSendo returns a signing secret that the node keeps. Every delivery must carry a valid `X-NetSendo-Signature` (HMAC-SHA256 of the raw request body); requests without one are answered with HTTP 401 and do not start the workflow.
+
 ---
 
 ### 📧 Resource: Email

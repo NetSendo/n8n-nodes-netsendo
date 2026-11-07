@@ -9,6 +9,7 @@ import type {
 import { NodeConnectionTypes } from 'n8n-workflow';
 
 import { reportHeartbeat } from './shared/heartbeat';
+import { isValidNetSendoSignature } from './shared/signature';
 
 export class NetSendoTrigger implements INodeType {
 	description: INodeTypeDescription = {
@@ -143,26 +144,30 @@ export class NetSendoTrigger implements INodeType {
 
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
 		const req = this.getRequestObject();
-		const body = this.getBodyData();
-
-		// Optional: Verify HMAC signature
 		const webhookData = this.getWorkflowStaticData('node');
-		const signature = req.headers['x-netsendo-signature'] as string;
+		const secret = webhookData.webhookSecret as string | undefined;
 
-		if (webhookData.webhookSecret && signature) {
-			// eslint-disable-next-line @typescript-eslint/no-require-imports
-			const crypto = require('crypto');
-			const expectedSignature = crypto
-				.createHmac('sha256', webhookData.webhookSecret as string)
-				.update(JSON.stringify(body))
-				.digest('hex');
+		// NetSendo gives every webhook a secret and signs every delivery with it,
+		// so once the secret is known an unsigned or wrongly signed request did
+		// not come from NetSendo. The HMAC covers the raw body, not a
+		// re-serialisation of the parsed JSON (see isValidNetSendoSignature).
+		if (secret) {
+			if (!req.rawBody && typeof req.readRawBody === 'function') {
+				await req.readRawBody();
+			}
 
-			if (signature !== expectedSignature) {
-				return {
-					webhookResponse: 'Invalid signature',
-				};
+			const signature = req.headers['x-netsendo-signature'];
+
+			if (!req.rawBody || !isValidNetSendoSignature(req.rawBody, signature, secret)) {
+				const res = this.getResponseObject();
+				res.writeHead(401, { 'Content-Type': 'text/plain; charset=utf-8' });
+				res.end('Invalid signature');
+
+				return { noWebhookResponse: true };
 			}
 		}
+
+		const body = this.getBodyData();
 
 		return {
 			workflowData: [this.helpers.returnJsonArray(body as IDataObject)],
